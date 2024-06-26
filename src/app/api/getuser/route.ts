@@ -3,17 +3,16 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(req: NextRequest, res: NextResponse) {
   try {
     const tokenResponse = await fetch(
-      `https://dev-q53dzuk0m4ze6hvy.us.auth0.com/oauth/token`,
+      `${process.env.AUTH0_ISSUER_BASE_URL}/oauth/token`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          client_id: "m4kc3OhyVh35XEKXD9DTHeQ8e6ikAIBf",
-          client_secret:
-            "RgiFO5KriIl5gp1ib6IgrMtH1ylzDqC8A2QgQYlrcz6AAoac1jJ90cRc3ltJm7Y3",
-          audience: "https://dev-q53dzuk0m4ze6hvy.us.auth0.com/api/v2/",
+          client_id: process.env.AUTH0_CLIENT_ID,
+          client_secret: process.env.AUTH0_CLIENT_SECRET,
+          audience: `${process.env.AUTH0_ISSUER_BASE_URL}/api/v2/`,
           grant_type: "client_credentials",
           scope: "read:users",
         }),
@@ -36,7 +35,7 @@ export async function GET(req: NextRequest, res: NextResponse) {
     }
 
     const response = await fetch(
-      "https://dev-q53dzuk0m4ze6hvy.us.auth0.com/api/v2/users",
+      `${process.env.AUTH0_ISSUER_BASE_URL}/api/v2/users`,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,

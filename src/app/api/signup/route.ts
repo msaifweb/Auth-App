@@ -6,7 +6,7 @@ export async function POST(req: NextRequest) {
     console.log(body);
 
     const response = await fetch(
-      "https://dev-q53dzuk0m4ze6hvy.us.auth0.com/dbconnections/signup",
+      `${process.env.AUTH0_ISSUER_BASE_URL}/dbconnections/signup`,
       {
         method: "POST",
         headers: {

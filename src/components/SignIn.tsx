@@ -1,10 +1,11 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
-
 const SignIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const router = useRouter();
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -23,6 +24,7 @@ const SignIn = () => {
     } else {
       const { data } = await response.json();
       console.log("User logged in successfully:", data);
+      router.push("/profile");
     }
   };
 

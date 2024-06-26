@@ -1,9 +1,10 @@
 "use client";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
-
 const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const router = useRouter();
 
   console.log(email);
   console.log(password);
@@ -25,6 +26,7 @@ const Signup = () => {
     } else {
       const { data } = await response.json();
       console.log("User signed up successfully:", data);
+      router.push("/profile");
     }
   };
 

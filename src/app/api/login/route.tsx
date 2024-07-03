@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
     // console.log(body);
 
     const response = await fetch(
-      "https://dev-q53dzuk0m4ze6hvy.us.auth0.com/oauth/token",
+      `${process.env.AUTH0_ISSUER_BASE_URL}/oauth/token`,
       {
         method: "POST",
         headers: {

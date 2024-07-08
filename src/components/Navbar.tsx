@@ -1,10 +1,11 @@
 "use client";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react"; // Added React import
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 import LogoutButton from "./LogoutButton"; // Adjust the path according to your project structure
 
 import { getCookie } from "../lib/useAuth";
+
 const Navbar: React.FC = () => {
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);

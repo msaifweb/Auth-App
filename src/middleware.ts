@@ -1,12 +1,3 @@
-// import React from "react";
-// import { NextResponse } from "next/server";
-
-// export default function middleware(req: NextResponse) {
-//   console.log("auth?", req.cookies.get("accessToken"));
-//   //   const cookie = req.cookies.has("accessToken");
-//   return NextResponse.next();
-// }
-
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 

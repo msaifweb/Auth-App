@@ -1,57 +1,78 @@
 "use client";
-// import Cookies from "js-cookie";
-import { setCookie, parseCookies } from "nookies";
-import { useCookies } from "next-client-cookies";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import LogoutButton from "./LogoutButton";
 import Cookies from "js-cookie";
-import { getCookie } from "@/lib/getCookie";
-import { useEffect } from "react";
-import { useAuth } from "@/lib/useAuth";
+import LogoutButton from "./LogoutButton"; // Adjust the path according to your project structure
 
-const Navbar = () => {
+import { getCookie } from "../lib/useAuth";
+const Navbar: React.FC = () => {
   const router = useRouter();
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
-  const { isAuthenticated } = useAuth();
-  console.log("Is authenticated:", isAuthenticated);
+  const checkAuthStatus = () => {
+    const token = getCookie("accessToken");
+    console.log("Token fetch:", token); // Add logging to debug
+    setIsAuthenticated(!!token);
+  };
 
-  // const token = getToken();
-  // const myCookies = document.cookie;
-  // console.log("mycookies", myCookies);
-  // const cookies = useCookies();
-  // console.log(cookies.get("accessToken"));
-  // console.log("get token", cookies);
-  const getToken = Cookies.get("accessToken");
-  console.log(getToken);
+  const [token, setToken] = useState(null);
+
+  useEffect(() => {
+    const tokenFromCookie: any = Cookies.get("accessToken");
+    console.log("Token from cookie:", tokenFromCookie); // Add logging
+
+    setToken(tokenFromCookie);
+  }, []);
+
+  useEffect(() => {
+    checkAuthStatus();
+
+    const handleLoginEvent = () => {
+      checkAuthStatus();
+    };
+
+    window.addEventListener("login", handleLoginEvent);
+
+    return () => {
+      window.removeEventListener("login", handleLoginEvent);
+    };
+  }, []);
+
+  const handleLogout = () => {
+    document.cookie = "accessToken=; Max-Age=0; path=/;"; // Remove cookie
+    setIsAuthenticated(false);
+    router.push("/signin");
+  };
 
   return (
     <nav className="flex md:flex-row flex-col items-center justify-between border-b px-32 py-4">
       <section>
         <h1
-          // onClick={() => router.push("/")}
+          onClick={() => router.push("/")}
           className="text-3xl font-semibold cursor-pointer"
         >
           Auth0
         </h1>
       </section>
-      <>
-        <section className="flex items-center gap-4">
-          <button
-            onClick={() => router.push("/signin")}
-            className="rounded-md bg-indigo-600 px-3 py-1.5 text-lg font-normal leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-          >
-            Sign In
-          </button>
-          <button
-            onClick={() => router.push("/signup")}
-            className="rounded-md bg-indigo-600 px-3 py-1.5 text-lg font-normal leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-          >
-            Sign Up
-          </button>
-        </section>
-        {isAuthenticated && <button>Logout</button>}
-        <LogoutButton />
-      </>
+      <section className="flex items-center gap-4">
+        {!isAuthenticated && (
+          <>
+            <button
+              onClick={() => router.push("/signin")}
+              className="rounded-md bg-indigo-600 px-3 py-1.5 text-lg font-normal leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            >
+              Sign In
+            </button>
+            <button
+              onClick={() => router.push("/signup")}
+              className="rounded-md bg-indigo-600 px-3 py-1.5 text-lg font-normal leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            >
+              Sign Up
+            </button>
+          </>
+        )}
+        {isAuthenticated && <LogoutButton />}
+      </section>
     </nav>
   );
 };

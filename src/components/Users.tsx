@@ -1,46 +1,44 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 const Users = () => {
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [email, setEmail] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchUsers = async () => {
+    const fetchEmail = async () => {
       try {
-        const response = await fetch("/api/getuser");
+        const token = ""; // Retrieve your token from wherever it's stored, e.g., local storage
+        const response = await fetch("/api/decode", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ token }),
+        });
+
         if (!response.ok) {
-          throw new Error(`Error: ${response.statusText}`);
+          throw new Error(`HTTP error! status: ${response.status}`);
         }
+
         const data = await response.json();
-        setUsers(data.data);
-        setLoading(false);
+        setEmail(data.email);
       } catch (error: any) {
         setError(error.message);
-        setLoading(false);
       }
     };
 
-    fetchUsers();
+    fetchEmail();
   }, []);
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
-  return (
-    <div>
-      <h1>Users</h1>
-      <ul>
-        {users.map((user: any) => (
-          <li key={user.user_id}>
-            <p>Name: {user.name}</p>
-            <p>Email: {user.email}</p>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
+  if (!email) {
+    return <div>Loading...</div>;
+  }
+
+  return <div className="text-3xl text-indigo-500">Logged in as: {email}</div>;
 };
-
 export default Users;

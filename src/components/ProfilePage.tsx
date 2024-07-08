@@ -1,20 +1,28 @@
+// src/components/ProfilePage.tsx
 "use client";
-import React from "react";
-import { useUser } from "@auth0/nextjs-auth0/client";
-import useFetchUser from "../lib/UserFetch";
+// import { useSession } from "next-auth/react";
 
 const ProfilePage = () => {
-  // const { user, error, isLoading } = useUser();
+  // const { data: session, status } = useSession();
 
-  // if (isLoading) return <div>Loading...</div>;
+  // You can use `status` to handle loading state
+  const loading = status === "loading";
 
-  // const userData = user as unknown as { name: string; email: string };
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div>
-      {/* <h2>{userData?.name}</h2>
-      <p>{userData?.email}</p> */}
-      <h3>Profile Page</h3>
+      <h1>Profile Page</h1>
+      {/* {session ? (
+        <div>
+          <p>Welcome, {session.user?.name}</p>
+          <p>Email: {session.user?.email}</p>
+        </div>
+      ) : (
+        <p>You are not logged in.</p>
+      )} */}
     </div>
   );
 };

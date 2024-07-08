@@ -1,16 +1,10 @@
-"use client";
-// lib/useAuth.ts
-import { useEffect, useState } from "react";
-import { getCookie } from "@/lib/getCookie";
-
-export function useAuth() {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-
-  useEffect(() => {
-    const token = getCookie("accessToken");
-    console.log("Token retrieved from cookie:", token);
-    setIsAuthenticated(!!token);
-  }, []);
-
-  return { isAuthenticated };
-}
+export const getCookie = (name: string): string | null => {
+  const nameEQ = name + "=";
+  const ca = document.cookie.split(";");
+  for (let i = 0; i < ca.length; i++) {
+    let c = ca[i];
+    while (c.charAt(0) === " ") c = c.substring(1, c.length);
+    if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+  }
+  return null;
+};

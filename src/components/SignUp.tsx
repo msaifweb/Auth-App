@@ -4,6 +4,8 @@ import { useState } from "react";
 const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+
   const router = useRouter();
 
   console.log(email);
@@ -21,12 +23,17 @@ const Signup = () => {
     });
 
     if (!response.ok) {
-      const { error } = await response.json();
-      console.error("Error:", error);
+      const { error, error_description } = await response.json();
+      let userFriendlyError = "Invalid email or password. Please try again.";
+      if (error === "invalid_grant") {
+        userFriendlyError = "Invalid email or password. Please try again.";
+      }
+      setError(userFriendlyError);
+      console.error("Error:", error_description);
     } else {
       const { data } = await response.json();
       console.log("User signed up successfully:", data);
-      router.push("/profile");
+      router.push("/signin");
     }
   };
 
@@ -102,6 +109,7 @@ const Signup = () => {
             Sign In
           </a>
         </p>
+        {error && <div className="text-red-500 text-sm mt-2">{error}</div>}
       </div>
     </div>
   );

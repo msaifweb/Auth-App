@@ -1,12 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { serialize } from "cookie";
 
-export async function POST(req: NextRequest) {
+export async function POST(req: NextRequest, res: NextResponse) {
   try {
-    // const body = await req.json();
-    const { email, password }: any = req.body;
-
-    // console.log(body);
+    // Parse the JSON body from the request
+    const body = await req.json();
+    const { email, password } = body; // Correctly extracting email and password from the parsed body
 
     const response = await fetch(
       `${process.env.AUTH0_ISSUER_BASE_URL}/oauth/token`,
@@ -18,12 +17,11 @@ export async function POST(req: NextRequest) {
         body: JSON.stringify({
           client_id: process.env.AUTH0_CLIENT_ID,
           client_secret: process.env.AUTH0_CLIENT_SECRET,
-          audience: process.env.AUTH0_AUDIENCE,
-          grant_type: process.env.AUTH0_GRANT_TYPE,
-          username: email,
+          audience: "https://auth-app",
+          grant_type: "password",
+          username: email, // Ensure this matches what Auth0 expects
           password: password,
-          realm: process.env.AUTH0_REALM,
-          // scope: "openid profile email",
+          scope: "openid profile email",
         }),
       }
     );
@@ -40,34 +38,33 @@ export async function POST(req: NextRequest) {
     }
 
     const data = await response.json();
-    console.log(data);
-    console.log("id token", data.id_Token);
+
+    // Output for debugging
+    console.log("API response data:", data);
     if (data.id_token) {
       console.log("ID Token:", data.id_token);
     }
 
-    if (data.access_token) {
-      const cookie = serialize("accessToken", data.access_token, {
+    if (data.id_token) {
+      const cookie = serialize("accessToken", data.id_token, {
         maxAge: 7 * 24 * 60 * 60, // 7 days in seconds
         path: "/",
-        httpOnly: true,
+        // httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
+        sameSite: "strict",
       });
 
-      const res = new NextResponse(JSON.stringify({ success: true }), {
+      return new NextResponse(JSON.stringify({ success: true }), {
         status: 200,
         headers: {
           "Set-Cookie": cookie,
         },
       });
-
-      return res;
     }
 
     return NextResponse.json({ data });
   } catch (error) {
-    console.error("Error fetching access token or API data:", error);
+    console.error("Error processing the request:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 }

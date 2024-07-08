@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest, res: NextResponse) {
   try {
+<<<<<<< Updated upstream
     const tokenResponse = await fetch(
       `${process.env.AUTH0_ISSUER_BASE_URL}/oauth/token`,
       {
@@ -18,27 +19,28 @@ export async function GET(req: NextRequest, res: NextResponse) {
         }),
       }
     );
+=======
+    const token =
+      req.headers.get("Authorization")?.split(" ")[1] ||
+      req.cookies.get("accessToken");
+>>>>>>> Stashed changes
 
-    if (!tokenResponse.ok) {
-      const errorText = await tokenResponse.text();
-      console.error(
-        `Error fetching access token: ${tokenResponse.status} - ${errorText}`
+    if (!token) {
+      return NextResponse.json(
+        { error: "Access token is missing" },
+        { status: 401 }
       );
     }
 
-    const tokenData = await tokenResponse.json();
-    console.log("Token Data:", tokenData);
-    const accessToken = tokenData.access_token;
-    console.log("Access Token:", accessToken);
-
-    if (!accessToken) {
-    }
-
     const response = await fetch(
+<<<<<<< Updated upstream
       `${process.env.AUTH0_ISSUER_BASE_URL}/api/v2/users`,
+=======
+      "https://dev-q53dzuk0m4ze6hvy.us.auth0.com/userinfo",
+>>>>>>> Stashed changes
       {
         headers: {
-          Authorization: `Bearer ${accessToken}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       }

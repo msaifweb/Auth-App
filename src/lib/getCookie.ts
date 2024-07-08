@@ -2,7 +2,7 @@
 // lib/getCookie.ts
 export function getCookie(name: string): string | undefined {
   if (typeof document === "undefined") {
-    console.log("Document is undefined");
+    // console.log("Document is undefined");
     return undefined;
   }
 

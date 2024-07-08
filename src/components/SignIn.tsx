@@ -2,13 +2,11 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { signIn } from "next-auth/react";
 
-// import { useAuth } from "../lib/useContext";
-
-const SignIn = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+const SignIn: React.FC = () => {
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
   const handleSubmit = async (event: React.FormEvent) => {
@@ -23,12 +21,18 @@ const SignIn = () => {
     });
 
     if (!response.ok) {
-      const { error } = await response.json();
-      console.error("Error:", error);
+      const { error, error_description } = await response.json();
+      let userFriendlyError = "Invalid email or password. Please try again.";
+      if (error === "invalid_grant") {
+        userFriendlyError = "Invalid email or password. Please try again.";
+      }
+      setError(userFriendlyError);
+      console.error("Error:", error_description);
     } else {
       const { data } = await response.json();
       console.log("User logged in successfully:", data);
-      router.push("/profile");
+      setError(null);
+      router.push("/users");
     }
   };
 
@@ -97,7 +101,7 @@ const SignIn = () => {
             </div>
           </form>
           <p className="mt-10 text-center text-sm text-gray-500">
-            Not a member?
+            Not a member?{" "}
             <a
               href="/signup"
               className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
@@ -105,6 +109,7 @@ const SignIn = () => {
               Sign Up
             </a>
           </p>
+          {error && <div className="text-red-500 text-sm mt-2">{error}</div>}
         </div>
       </div>
     </>
